@@ -1,0 +1,179 @@
+/* css/login.css */
+
+:root {
+    --color-dark-bg: #091d3b;          /* Azul Noturno - Fundo principal muito escuro */
+    --color-element-bg: #1C1C1C;       /* Cinza Ônix - Fundo de cards, modais, etc. */
+    --color-deep-purple: #3A005A;      /* Roxo Profundo - Cor secundária de destaque */
+    --color-electric-purple: #9A00FF;  /* Roxo Elétrico - Destaque sexy, interativo */
+    --color-neon-blue: #00BFFF;        /* Azul Neon - Segundo destaque, gradientes */
+    --color-text-light: #E0E0E0;       /* Texto claro geral, em fundos escuros */
+    --color-text-muted: #A0A0A0;       /* Texto cinza médio, para detalhes */
+    --color-white: #FFFFFF;            /* Branco puro para alto contraste */
+    --color-red-error: #D9534F;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-dark-bg); /* Fundo muito escuro */
+    color: var(--color-text-light);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+    /* Fundo com gradiente sutil e brilho */
+    background: linear-gradient(145deg, var(--color-dark-bg) 0%, #050D18 100%);
+    position: relative; /* Para o efeito de partículas ou brilhos */
+}
+
+/* Efeito de brilho de fundo para o login */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at top left, var(--color-electric-purple) 0%, transparent 25%),
+                radial-gradient(circle at bottom right, var(--color-neon-blue) 0%, transparent 25%);
+    opacity: 0.1;
+    animation: backgroundGlow 15s infinite alternate;
+    z-index: -1; /* Fica atrás de todo o conteúdo */
+}
+
+@keyframes backgroundGlow {
+    0% { transform: scale(1); opacity: 0.1; }
+    50% { transform: scale(1.05); opacity: 0.15; }
+    100% { transform: scale(1); opacity: 0.1; }
+}
+
+
+.login-container {
+    /* Fundo da caixa de login com gradiente de roxo e cinza, bem escuro */
+    background: linear-gradient(145deg, var(--color-deep-purple), var(--color-element-bg));
+    border-radius: 15px;
+    padding: 3.5rem; /* Um pouco mais de padding */
+    /* Sombra e borda com glow elétrico */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), 0 0 0 5px var(--color-electric-purple) inset;
+    text-align: center;
+    max-width: 480px; /* Levemente maior */
+    width: 90%;
+    animation: fadeInScale 0.7s ease-out forwards;
+    position: relative;
+    overflow: hidden; /* Garante que o brilho interno não vaze */
+    z-index: 1; /* Para garantir que fique acima do background glow */
+}
+
+/* Efeito de brilho sutil ao redor da caixa de login */
+.login-container::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    border-radius: 20px;
+    background: linear-gradient(45deg, var(--color-electric-purple), var(--color-neon-blue), var(--color-electric-purple));
+    filter: blur(15px);
+    opacity: 0.3;
+    z-index: -1;
+    animation: borderGlow 5s infinite alternate;
+}
+
+@keyframes borderGlow {
+    0% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.02); opacity: 0.4; }
+    100% { transform: scale(1); opacity: 0.3; }
+}
+
+
+.login-box h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.5rem; /* Título maior e mais impactante */
+    color: var(--color-white); /* Título em branco */
+    margin-bottom: 1rem;
+    text-shadow: 0 0 20px var(--color-electric-purple); /* Brilho intenso no título */
+}
+
+.login-box p {
+    font-size: 1.1rem; /* Texto um pouco maior */
+    color: var(--color-text-muted); /* Texto em cinza médio */
+    margin-bottom: 2.5rem; /* Mais espaçamento */
+}
+
+.form-group label {
+    color: var(--color-text-light); /* Labels em cinza claro */
+}
+
+.form-group input {
+    width: calc(100% - 20px);
+    padding: 15px 10px; /* Mais padding */
+    border: 1px solid var(--color-deep-purple); /* Borda em roxo profundo */
+    border-radius: 10px; /* Bordas mais suaves */
+    background-color: rgba(0, 0, 0, 0.4); /* Fundo do input mais escuro e translúcido */
+    color: var(--color-white); /* Texto do input em branco */
+    font-size: 1.1rem; /* Fonte maior */
+    /* Efeito de inset shadow para profundidade */
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.form-group input:focus {
+    border-color: var(--color-electric-purple); /* Borda no foco em roxo elétrico */
+    outline: none;
+    /* Glow mais forte no foco */
+    box-shadow: 0 0 0 3px rgba(154, 0, 255, 0.4), inset 0 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+.btn-primary {
+    display: block;
+    width: 100%;
+    padding: 18px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(45deg, var(--color-deep-purple), var(--color-electric-purple));
+    color: var(--color-white);
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(154, 0, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    
+    /* === AQUI ESTÁ A MUDANÇA: Adiciona margem superior ao botão === */
+    margin-top: 2.5rem; /* Ajuste este valor conforme o espaçamento desejado */
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, var(--color-electric-purple), var(--color-neon-blue));
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px var(--color-electric-purple), 0 0 40px var(--color-electric-purple);
+}
+
+
+.error-message {
+    color: var(--color-red-error);
+    font-size: 1rem;
+    margin-top: 1.5rem; /* Mais espaçamento */
+    text-shadow: 0 0 5px rgba(217, 83, 79, 0.5); /* Pequeno glow de erro */
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .login-container {
+        padding: 2.5rem;
+        margin: 1rem;
+    }
+
+    .login-box h1 {
+        font-size: 2rem;
+    }
+    .form-group input {
+        padding: 12px 10px;
+    }
+    .btn-primary {
+        padding: 15px;
+    }
+}

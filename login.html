@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mercadinho Digital - Login</title>
+    <link rel="stylesheet" href="../STORE/css/login.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h1>Bem-vindo ao Mercadinho Digital</h1>
+            <p>Faça login para continuar sua experiência de compra.</p>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Usuário:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Senha:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Entrar</button>
+                <p class="error-message" id="login-error"></p>
+            </form>
+        </div>
+    </div>
+    
+    <script type="module" src="../STORE/js/main.js"></script>
+    <script type="module" src="../STORE/js/cart.js"></script>
+    <script type="module" src="../STORE/js/auth.js"></script>
+    <script type="module" src="../STORE/js/api.js"></script>
+</body>
+</html>

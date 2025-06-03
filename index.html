@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mercadinho Digital - Catálogo</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap">
+</head>
+<body>
+    <header class="main-header">
+        <nav class="navbar">
+            <a href="#" class="logo">Mercadinho <span class="logo-highlight">Digital</span></a>
+            <ul class="nav-links">
+                <li>
+                    <a href="#" id="cart-icon" class="cart-icon-display">
+                        🛒 <span id="cart-count">0</span>
+                    </a>
+                </li>
+                <li><a href="#" id="logout-btn">Sair</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="hero-section">
+            <h1>Descubra nossos produtos exclusivos</h1>
+            <p>Qualidade e conveniência na palma da sua mão.</p>
+        </section>
+
+        <section class="product-catalog" id="product-catalog">
+            <div class="loading-spinner"></div>
+        </section>
+    </main>
+
+    <div class="cart-modal" id="cart-modal">
+        <div class="cart-modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Seu Carrinho</h2>
+            <div id="cart-items">
+                </div>
+            <div class="cart-summary">
+                <p>Subtotal: R$ <span id="cart-subtotal">0.00</span></p>
+                <p>Total: R$ <span id="cart-total">0.00</span></p>
+            </div>
+            <button class="btn btn-primary" id="checkout-btn">Finalizar Compra</button>
+        </div>
+    </div>
+
+    <script type="module" src="../STORE/js/main.js"></script>
+    <script type="module" src="../STORE/js/cart.js"></script>
+    <script type="module" src="../STORE/js/auth.js"></script>
+    <script type="module" src="../STORE/js/api.js"></script>
+</body>
+</html>
