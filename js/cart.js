@@ -1,4 +1,3 @@
-// js/cart.js
 export const getCart = () => {
     const cart = localStorage.getItem('cart');
     return cart ? JSON.parse(cart) : [];
@@ -27,7 +26,7 @@ export const updateProductQuantity = (productId, newQuantity) => {
 
     if (productIndex > -1) {
         if (newQuantity <= 0) {
-            cart.splice(productIndex, 1); // Remove if quantity is 0 or less
+            cart.splice(productIndex, 1); // Remove se a quantidade for 0 ou menos
         } else {
             cart[productIndex].quantity = newQuantity;
         }
@@ -53,9 +52,9 @@ export const calculateCartTotals = (cart) => {
     cart.forEach(item => {
         subtotal += item.price * item.quantity;
     });
-    // Add shipping, taxes etc. if needed
+    // Adicione frete, impostos etc. se necessário
     return {
         subtotal: subtotal.toFixed(2),
-        total: subtotal.toFixed(2) // For now, total is same as subtotal
+        total: subtotal.toFixed(2) // Por enquanto, total é o mesmo que subtotal
     };
 };

@@ -1,16 +1,15 @@
-// js/main.js
 import { fetchProducts } from './api.js';
 import { getCart, saveCart, addProductToCart, updateProductQuantity, removeProductFromCart, clearCart, calculateCartTotals } from './cart.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // Check authentication
+    // Verifica autenticação. Se não estiver autenticado, redireciona para o login.
     if (localStorage.getItem('isAuthenticated') !== 'true') {
         window.location.href = 'login.html';
-        return;
+        return; // Importante para parar a execução do script
     }
 
     const productCatalog = document.getElementById('product-catalog');
-    const cartIcon = document.getElementById('cart-icon'); // Este é o link do ícone no cabeçalho
+    const cartIcon = document.getElementById('cart-icon');
     const cartModal = document.getElementById('cart-modal');
     const closeCartBtn = cartModal.querySelector('.close-button');
     const cartItemsContainer = document.getElementById('cart-items');
@@ -18,22 +17,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     const cartTotalSpan = document.getElementById('cart-total');
     const cartCountSpan = document.getElementById('cart-count');
     const checkoutBtn = document.getElementById('checkout-btn');
-    const logoutBtn = document.getElementById('logout-btn');
-    const loadingSpinner = document.querySelector('.loading-spinner');
+    const logoutBtn = document.getElementById('logout-btn'); // Certifique-se que este ID existe no index.html
 
-    let products = []; // To store fetched products
+    let products = []; // Para armazenar os produtos buscados
 
     // --- Logout Functionality ---
-    logoutBtn.addEventListener('click', (event) => {
-        event.preventDefault();
-        localStorage.removeItem('isAuthenticated');
-        localStorage.removeItem('cart'); // Clear cart on logout
-        window.location.href = 'login.html';
-    });
+    // A lógica de logout foi movida para auth.js para centralizar a autenticação,
+    // mas o event listener aqui ainda é útil se você quiser que o main.js
+    // também possa lidar com o logout. Para evitar duplicação, preferimos manter
+    // a lógica principal de logout em auth.js. O trecho abaixo foi mantido
+    // apenas para referência, mas o `auth.js` já gerencia isso.
+    /*
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            localStorage.removeItem('isAuthenticated');
+            localStorage.removeItem('cart'); // Limpa o carrinho ao sair
+            window.location.href = 'login.html';
+        });
+    }
+    */
 
     // --- Product Catalog Rendering ---
     const renderProducts = (productsToRender) => {
-        productCatalog.innerHTML = ''; // Clear previous products
+        productCatalog.innerHTML = ''; // Limpa produtos anteriores
         if (productsToRender.length === 0) {
             productCatalog.innerHTML = '<p>Nenhum produto encontrado.</p>';
             return;
@@ -52,7 +59,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             productCatalog.appendChild(productCard);
         });
 
-        // Add event listeners to "Add to Cart" buttons
+        // Adiciona event listeners aos botões "Adicionar ao Carrinho"
         document.querySelectorAll('.add-to-cart-btn').forEach(button => {
             button.addEventListener('click', (event) => {
                 const productId = parseInt(event.target.dataset.id);
@@ -60,22 +67,26 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (productToAdd) {
                     addProductToCart(productToAdd);
                     updateCartDisplay();
-                    // Optional: Show a temporary "Added to cart" message
                 }
             });
         });
     };
 
     // --- Fetch Products on Load ---
-    loadingSpinner.style.display = 'block'; // Show spinner
+    const loadingSpinner = document.querySelector('.loading-spinner');
+    if (loadingSpinner) { // Garante que o spinner existe antes de tentar manipulá-lo
+        loadingSpinner.style.display = 'block'; // Mostra o spinner
+    }
     products = await fetchProducts();
-    loadingSpinner.style.display = 'none'; // Hide spinner
+    if (loadingSpinner) {
+        loadingSpinner.style.display = 'none'; // Esconde o spinner
+    }
     renderProducts(products);
 
     // --- Cart Display and Management ---
     const updateCartDisplay = () => {
         const cart = getCart();
-        cartItemsContainer.innerHTML = ''; // Clear current cart items
+        cartItemsContainer.innerHTML = ''; // Limpa itens atuais do carrinho
         const { subtotal, total } = calculateCartTotals(cart);
 
         if (cart.length === 0) {
@@ -103,9 +114,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         cartSubtotalSpan.textContent = subtotal;
         cartTotalSpan.textContent = total;
-        cartCountSpan.textContent = cart.length; // Update cart icon count
+        cartCountSpan.textContent = cart.length; // Atualiza a contagem no ícone do carrinho
 
-        // Add event listeners for quantity controls and remove buttons
+        // Adiciona event listeners para controles de quantidade e botões de remover
         document.querySelectorAll('.increase-quantity-btn').forEach(button => {
             button.addEventListener('click', (event) => {
                 const productId = parseInt(event.target.dataset.id);
@@ -133,24 +144,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     };
 
-    // Initial cart display on load
+    // Exibição inicial do carrinho ao carregar a página
     updateCartDisplay();
 
     // --- Cart Modal Interactions ---
-    // Event listener para abrir o modal quando o ícone do carrinho é clicado
     cartIcon.addEventListener('click', (event) => {
         event.preventDefault(); // Impede o comportamento padrão do link
-        cartModal.classList.add('open'); // Adiciona a classe 'open' para deslizar
+        cartModal.classList.add('open');
     });
 
-    // Event listener para fechar o modal quando o botão de fechar é clicado
     closeCartBtn.addEventListener('click', () => {
-        cartModal.classList.remove('open'); // Remove a classe 'open' para deslizar de volta
+        cartModal.classList.remove('open');
     });
 
-    // Event listener para fechar o modal se clicar fora dele
     cartModal.addEventListener('click', (event) => {
-        if (event.target === cartModal) { // Verifica se o clique foi diretamente no background do modal
+        if (event.target === cartModal) {
             cartModal.classList.remove('open');
         }
     });
@@ -168,7 +176,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert('Pedido finalizado com sucesso! Em breve você receberá um email com os detalhes da entrega e pagamento.');
             clearCart();
             updateCartDisplay();
-            cartModal.classList.remove('open'); // Close cart modal after checkout
+            cartModal.classList.remove('open');
         }
     });
 });
