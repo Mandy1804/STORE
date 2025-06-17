@@ -1,5 +1,131 @@
-import { fetchProducts } from './api.js';
-import { getCart, saveCart, addProductToCart, updateProductQuantity, removeProductFromCart, clearCart, calculateCartTotals } from './cart.js';
+ const fetchProducts = async () => {
+    try {
+        const response = await fetch('https://fakestoreapi.com/products');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const products = await response.json();
+        return products;
+    } catch (error) {
+        console.error('Erro ao buscar produtos:', error);
+        return [];
+    }
+};
+
+const getCart = () => {
+    const cart = localStorage.getItem('cart');
+    return cart ? JSON.parse(cart) : [];
+};
+
+ const saveCart = (cart) => {
+    localStorage.setItem('cart', JSON.stringify(cart));
+};
+
+ const addProductToCart = (product) => {
+    const cart = getCart();
+    const existingProduct = cart.find(item => item.id === product.id);
+
+    if (existingProduct) {
+        existingProduct.quantity += 1;
+    } else {
+        cart.push({ ...product, quantity: 1 });
+    }
+    saveCart(cart);
+    return cart;
+};
+
+ const updateProductQuantity = (productId, newQuantity) => {
+    let cart = getCart();
+    const productIndex = cart.findIndex(item => item.id === productId);
+
+    if (productIndex > -1) {
+        if (newQuantity <= 0) {
+            cart.splice(productIndex, 1); // Remove se a quantidade for 0 ou menos
+        } else {
+            cart[productIndex].quantity = newQuantity;
+        }
+    }
+    saveCart(cart);
+    return cart;
+};
+
+ const removeProductFromCart = (productId) => {
+    let cart = getCart();
+    cart = cart.filter(item => item.id !== productId);
+    saveCart(cart);
+    return cart;
+};
+
+ const clearCart = () => {
+    localStorage.removeItem('cart');
+    return [];
+};
+
+ const calculateCartTotals = (cart) => {
+    let subtotal = 0;
+    cart.forEach(item => {
+        subtotal += item.price * item.quantity;
+    });
+    // Adicione frete, impostos etc. se necessário
+    return {
+        subtotal: subtotal.toFixed(2),
+        total: subtotal.toFixed(2) // Por enquanto, total é o mesmo que subtotal
+    };
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.getElementById('login-form');
+    const loginError = document.getElementById('login-error');
+    const logoutButton = document.getElementById('logout-btn');
+
+    // Verifica se o usuário já está autenticado ao carregar a página de login
+    function verificarAutenticacao() {
+        if (localStorage.getItem('isAuthenticated') === 'true') {
+            window.location.href = 'index.html';
+        }
+    }
+
+    // Lógica de autenticação ao enviar o formulário
+    function realizarLogin(event) {
+        event.preventDefault();
+
+        const username = loginForm.username.value;
+        const password = loginForm.password.value;
+
+        if (username === 'cliente@mercadinho.com' && password === 'senha123') {
+            localStorage.setItem('isAuthenticated', 'true');
+            loginError.textContent = '';
+            alert('Login bem-sucedido!');
+            window.location.href = 'index.html';
+        } else {
+            loginError.textContent = 'Usuário ou senha inválidos. Tente novamente. (usuario : cliente@mercadinho.com, e senha : senha123)';
+            loginError.style.color = 'red';
+            loginError.style.display = 'block';
+        }
+    }
+
+    // Realiza logout ao clicar no botão de sair
+    function realizarLogout(event) {
+        event.preventDefault();
+        localStorage.removeItem('isAuthenticated');
+        localStorage.removeItem('cart');
+        alert('Você saiu da sua conta.');
+        window.location.href = 'login.html';
+    }
+
+    // Executa lógicas específicas com base na página
+    if (loginForm) {
+        verificarAutenticacao();
+        loginForm.addEventListener('submit', realizarLogin);
+    }
+
+    if (logoutButton) {
+        logoutButton.addEventListener('click', realizarLogout);
+    }
+});
+
+
+
 
 document.addEventListener('DOMContentLoaded', async () => {
     // Verifica autenticação. Se não estiver autenticado, redireciona para o login.
@@ -11,6 +137,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const productCatalog = document.getElementById('product-catalog');
     const cartIcon = document.getElementById('cart-icon');
     const cartModal = document.getElementById('cart-modal');
+    const openCartBtn = cartModal.querySelector('.button');
     const closeCartBtn = cartModal.querySelector('.close-button');
     const cartItemsContainer = document.getElementById('cart-items');
     const cartSubtotalSpan = document.getElementById('cart-subtotal');
@@ -114,7 +241,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         cartSubtotalSpan.textContent = subtotal;
         cartTotalSpan.textContent = total;
-        cartCountSpan.textContent = cart.length; // Atualiza a contagem no ícone do carrinho
+
+        const totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
+        cartCountSpan.textContent = totalQuantity;
 
         // Adiciona event listeners para controles de quantidade e botões de remover
         document.querySelectorAll('.increase-quantity-btn').forEach(button => {
@@ -157,11 +286,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         cartModal.classList.remove('open');
     });
 
-    cartModal.addEventListener('click', (event) => {
-        if (event.target === cartModal) {
-            cartModal.classList.remove('open');
-        }
-    });
 
     // --- Checkout Process ---
     checkoutBtn.addEventListener('click', () => {
