@@ -39,12 +39,67 @@
             <span class="close-button">&times;</span>
             <h2>Seu Carrinho</h2>
             <div id="cart-items">
-                </div>
+            </div>
             <div class="cart-summary">
                 <p>Subtotal: R$ <span id="cart-subtotal">0.00</span></p>
                 <p>Total: R$ <span id="cart-total">0.00</span></p>
             </div>
             <button class="btn btn-primary" id="checkout-btn">Finalizar Compra</button>
+        </div>
+    </div>
+
+    <div class="checkout-modal" id="checkout-modal">
+        <div class="checkout-modal-content">
+            <span class="close-button" id="close-checkout-modal">&times;</span>
+            <h2>Finalizar Compra</h2>
+
+            <div class="checkout-section" id="order-confirmation">
+                <h3>Confirmação do Pedido</h3>
+                <div id="checkout-cart-items">
+                    </div>
+                <div class="cart-summary">
+                    <p>Total do Pedido: R$ <span id="checkout-total">0.00</span></p>
+                </div>
+            </div>
+
+            <div class="checkout-section" id="payment-method">
+                <h3>Método de Pagamento</h3>
+                <div class="payment-options">
+                    <label>
+                        <input type="radio" name="payment" value="credit-card" checked> Cartão de Crédito
+                    </label>
+                    <label>
+                        <input type="radio" name="payment" value="boleto"> Boleto Bancário
+                    </label>
+                    <label>
+                        <input type="radio" name="payment" value="pix"> Pix
+                    </label>
+                </div>
+            </div>
+
+            <div class="checkout-section" id="delivery-info">
+                <h3>Informações de Entrega</h3>
+                <form id="delivery-form">
+                    <div class="form-group">
+                        <label for="name">Nome Completo:</label>
+                        <input type="text" id="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Endereço:</label>
+                        <input type="text" id="address" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="city">Cidade:</label>
+                        <input type="text" id="city" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="zip-code">CEP:</label>
+                        <input type="text" id="zip-code" required>
+                    </div>
+                </form>
+            </div>
+            
+            <button class="btn btn-primary" id="confirm-order-btn">Confirmar Pedido</button>
         </div>
     </div>
 

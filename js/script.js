@@ -1,5 +1,5 @@
- //api
- const fetchProducts = async () => {
+//api
+const fetchProducts = async () => {
     try {
         const response = await fetch('https://fakestoreapi.com/products');
         if (!response.ok) {
@@ -19,11 +19,11 @@ const getCart = () => {
     return cart ? JSON.parse(cart) : [];
 };
 
- const saveCart = (cart) => {
+const saveCart = (cart) => {
     localStorage.setItem('cart', JSON.stringify(cart));
 };
 
- const addProductToCart = (product) => {
+const addProductToCart = (product) => {
     const cart = getCart();
     const existingProduct = cart.find(item => item.id === product.id);
 
@@ -36,7 +36,7 @@ const getCart = () => {
     return cart;
 };
 
- const updateProductQuantity = (productId, newQuantity) => {
+const updateProductQuantity = (productId, newQuantity) => {
     let cart = getCart();
     const productIndex = cart.findIndex(item => item.id === productId);
 
@@ -51,27 +51,27 @@ const getCart = () => {
     return cart;
 };
 
- const removeProductFromCart = (productId) => {
+const removeProductFromCart = (productId) => {
     let cart = getCart();
     cart = cart.filter(item => item.id !== productId);
     saveCart(cart);
     return cart;
 };
 
- const clearCart = () => {
+const clearCart = () => {
     localStorage.removeItem('cart');
     return [];
 };
 
- const calculateCartTotals = (cart) => {
+const calculateCartTotals = (cart) => {
     let subtotal = 0;
     cart.forEach(item => {
         subtotal += item.price * item.quantity;
     });
-   
+    
     return {
         subtotal: subtotal.toFixed(2),
-        total: subtotal.toFixed(2) 
+        total: subtotal.toFixed(2)
     };
 };
 
@@ -87,33 +87,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     const productCatalog = document.getElementById('product-catalog');
     const cartIcon = document.getElementById('cart-icon');
     const cartModal = document.getElementById('cart-modal');
-    const openCartBtn = cartModal.querySelector('.button');
     const closeCartBtn = cartModal.querySelector('.close-button');
     const cartItemsContainer = document.getElementById('cart-items');
     const cartSubtotalSpan = document.getElementById('cart-subtotal');
     const cartTotalSpan = document.getElementById('cart-total');
     const cartCountSpan = document.getElementById('cart-count');
     const checkoutBtn = document.getElementById('checkout-btn');
-    const logoutBtn = document.getElementById('logout-btn'); // Certifique-se que este ID existe no index.html
+    const logoutBtn = document.getElementById('logout-btn');
+
+    // Elementos do novo modal de checkout
+    const checkoutModal = document.getElementById('checkout-modal');
+    const closeCheckoutModalBtn = document.getElementById('close-checkout-modal');
+    const checkoutCartItemsContainer = document.getElementById('checkout-cart-items');
+    const checkoutTotalSpan = document.getElementById('checkout-total');
+    const confirmOrderBtn = document.getElementById('confirm-order-btn');
+    const deliveryForm = document.getElementById('delivery-form');
 
     let products = []; // Para armazenar os produtos buscados
-
-    // --- Logout Functionality ---
-    // A lógica de logout foi movida para auth.js para centralizar a autenticação,
-    // mas o event listener aqui ainda é útil se você quiser que o main.js
-    // também possa lidar com o logout. Para evitar duplicação, preferimos manter
-    // a lógica principal de logout em auth.js. O trecho abaixo foi mantido
-    // apenas para referência, mas o `auth.js` já gerencia isso.
-    /*
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', (event) => {
-            event.preventDefault();
-            localStorage.removeItem('isAuthenticated');
-            localStorage.removeItem('cart'); // Limpa o carrinho ao sair
-            window.location.href = 'login.html';
-        });
-    }
-    */
 
     // --- Product Catalog Rendering ---
     const renderProducts = (productsToRender) => {
@@ -236,21 +226,76 @@ document.addEventListener('DOMContentLoaded', async () => {
         cartModal.classList.remove('open');
     });
 
-
-    // --- Checkout Process ---
+    // --- Checkout Process (antigo) ---
+    // Este trecho será modificado para abrir o novo modal de checkout
     checkoutBtn.addEventListener('click', () => {
         const cart = getCart();
         if (cart.length === 0) {
             alert('Seu carrinho está vazio. Adicione produtos antes de finalizar a compra.');
             return;
         }
+        // Abre o modal de checkout e preenche os dados
+        openCheckoutModal();
+    });
 
-        const confirmation = confirm('Deseja finalizar a compra?');
-        if (confirmation) {
-            alert('Pedido finalizado com sucesso! Em breve você receberá um email com os detalhes da entrega e pagamento.');
-            clearCart();
-            updateCartDisplay();
-            cartModal.classList.remove('open');
+    // --- Novo Checkout Process ---
+    const openCheckoutModal = () => {
+        const cart = getCart();
+        checkoutCartItemsContainer.innerHTML = '';
+        const { total } = calculateCartTotals(cart);
+
+        if (cart.length === 0) {
+            checkoutCartItemsContainer.innerHTML = '<p>Seu carrinho está vazio.</p>';
+        } else {
+            cart.forEach(item => {
+                const checkoutItemDiv = document.createElement('div');
+                checkoutItemDiv.classList.add('cart-item'); // Reutiliza a classe para estilização
+                checkoutItemDiv.innerHTML = `
+                    <img src="${item.image}" alt="${item.title}">
+                    <div class="item-details">
+                        <h4>${item.title}</h4>
+                        <p>Quantidade: <span>${item.quantity}</span> x R$ ${item.price.toFixed(2)}</p>
+                    </div>
+                    <p>R$ ${(item.quantity * item.price).toFixed(2)}</p>
+                `;
+                checkoutCartItemsContainer.appendChild(checkoutItemDiv);
+            });
         }
+        checkoutTotalSpan.textContent = total;
+        cartModal.classList.remove('open'); // Fecha o modal do carrinho
+        checkoutModal.classList.add('open'); // Abre o modal de checkout
+    };
+
+    closeCheckoutModalBtn.addEventListener('click', () => {
+        checkoutModal.classList.remove('open');
+    });
+
+    confirmOrderBtn.addEventListener('click', (event) => {
+        event.preventDefault(); // Impede o envio padrão do formulário
+
+        const name = document.getElementById('name').value;
+        const address = document.getElementById('address').value;
+        const city = document.getElementById('city').value;
+        const zipCode = document.getElementById('zip-code').value;
+
+        if (!name || !address || !city || !zipCode) {
+            alert('Por favor, preencha todas as informações de entrega.');
+            return;
+        }
+
+        const selectedPaymentMethod = document.querySelector('input[name="payment"]:checked').value;
+        
+        // Simulação de processamento do pedido
+        console.log('Pedido Confirmado!');
+        console.log('Método de Pagamento:', selectedPaymentMethod);
+        console.log('Informações de Entrega:', { name, address, city, zipCode });
+        console.log('Itens do Pedido:', getCart());
+        console.log('Total:', checkoutTotalSpan.textContent);
+
+        alert('Pedido finalizado com sucesso! Em breve você receberá um e-mail com os detalhes da entrega e pagamento.');
+        clearCart();
+        updateCartDisplay();
+        checkoutModal.classList.remove('open');
+        deliveryForm.reset(); // Limpa o formulário de entrega
     });
 });

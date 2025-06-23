@@ -1,14 +1,14 @@
 /* As variáveis de cores e estilos gerais continuam exatamente as mesmas do último ajuste,
-   para manter a estética dark, sexy e moderna. */
+    para manter a estética dark, sexy e moderna. */
 :root {
-    --color-dark-bg: #091d3b;          /* Azul Noturno - Fundo principal muito escuro */
-    --color-element-bg: #1c1c1c;       /* Cinza Ônix - Fundo de cards, modais, etc. */
-    --color-deep-purple: #3A005A;      /* Roxo Profundo - Cor secundária de destaque */
-    --color-electric-purple: #9A00FF;  /* Roxo Elétrico - Destaque sexy, interativo */
-    --color-neon-blue: #00BFFF;        /* Azul Neon - Segundo destaque, gradientes */
-    --color-text-light: #E0E0E0;       /* Texto claro geral, em fundos escuros */
-    --color-text-muted: #A0A0A0;       /* Texto cinza médio, para detalhes */
-    --color-white: #FFFFFF;            /* Branco puro para alto contraste */
+    --color-dark-bg: #091d3b;           /* Azul Noturno - Fundo principal muito escuro */
+    --color-element-bg: #1c1c1c;        /* Cinza Ônix - Fundo de cards, modais, etc. */
+    --color-deep-purple: #3A005A;       /* Roxo Profundo - Cor secundária de destaque */
+    --color-electric-purple: #9A00FF;   /* Roxo Elétrico - Destaque sexy, interativo */
+    --color-neon-blue: #00BFFF;         /* Azul Neon - Segundo destaque, gradientes */
+    --color-text-light: #E0E0E0;        /* Texto claro geral, em fundos escuros */
+    --color-text-muted: #A0A0A0;        /* Texto cinza médio, para detalhes */
+    --color-white: #FFFFFF;             /* Branco puro para alto contraste */
     --color-red-error: #D9534F;
     --color-green-success: #5CB85C;
 }
@@ -287,6 +287,9 @@ h1, h2, h3, h4, h5, h6 {
     cursor: pointer;
     font-size: 1.5rem;
     font-weight: bold;
+    position: absolute; /* Adicionado para posicionar o botão fechar */
+    top: 1rem;
+    right: 1.5rem;
 }
 
 .close-button:hover {
@@ -294,7 +297,7 @@ h1, h2, h3, h4, h5, h6 {
     text-shadow: 0 0 8px var(--color-neon-blue);
 }
 
-.cart-modal h2 {
+.cart-modal h2, .checkout-modal h2 { /* Aplicado ao h2 de ambos os modais */
     color: var(--color-white);
     margin-bottom: 1.5rem;
     text-align: center;
@@ -418,4 +421,223 @@ h1, h2, h3, h4, h5, h6 {
     100% { transform: rotate(360deg); }
 }
 
+/* --- Novos estilos para o modal de Checkout --- */
+.checkout-modal {
+    position: fixed;
+    top: 0;
+    left: 0; /* Começa à esquerda para sobrepor o conteúdo */
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Overlay escuro */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000; /* Acima do modal do carrinho */
+    visibility: hidden; /* Escondido por padrão */
+    opacity: 0;
+    transition: visibility 0.4s ease-in-out, opacity 0.4s ease-in-out;
+}
 
+.checkout-modal.open {
+    visibility: visible;
+    opacity: 1;
+}
+
+.checkout-modal-content {
+    background-color: var(--color-element-bg);
+    padding: 2.5rem;
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(0, 191, 255, 0.3), 0 0 50px rgba(154, 0, 255, 0.2);
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh; /* Limita a altura do modal */
+    overflow-y: auto; /* Adiciona scroll se o conteúdo for muito longo */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.checkout-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.checkout-section h3 {
+    color: var(--color-electric-purple);
+    margin-bottom: 1rem;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+#checkout-cart-items {
+    max-height: 200px; /* Altura máxima para a lista de itens do pedido */
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+#checkout-cart-items .cart-item {
+    background-color: transparent; /* Remove o fundo escuro dos itens no checkout */
+    border: none;
+    padding: 0.5rem 0;
+    margin-bottom: 0.5rem;
+    display: grid;
+    grid-template-columns: 60px 1fr auto; /* Ajusta o layout para checkout */
+    gap: 1rem;
+    align-items: center;
+}
+
+#checkout-cart-items .cart-item img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+#checkout-cart-items .cart-item .item-details h4 {
+    font-size: 0.95rem;
+}
+
+#checkout-cart-items .cart-item .item-details p {
+    font-size: 0.85rem;
+}
+
+#checkout-cart-items .cart-item span { /* Quantidade */
+    font-weight: 600;
+    color: var(--color-neon-blue);
+}
+
+.payment-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.payment-options label {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 1rem;
+    color: var(--color-text-light);
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.payment-options label:hover {
+    color: var(--color-neon-blue);
+}
+
+.payment-options input[type="radio"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--color-electric-purple);
+    border-radius: 50%;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.payment-options input[type="radio"]:checked {
+    background-color: var(--color-electric-purple);
+    border-color: var(--color-neon-blue);
+}
+
+.payment-options input[type="radio"]:checked::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background-color: var(--color-white);
+    border-radius: 50%;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+}
+
+.form-group input[type="text"] {
+    width: calc(100% - 20px);
+    padding: 0.8rem 10px;
+    border-radius: 5px;
+    border: 1px solid var(--color-deep-purple);
+    background-color: rgba(0, 0, 0, 0.3);
+    color: var(--color-text-light);
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input[type="text"]:focus {
+    border-color: var(--color-neon-blue);
+    box-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
+    outline: none;
+}
+
+#confirm-order-btn {
+    width: 100%;
+    margin-top: 2rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .nav-links {
+        width: 100%;
+        justify-content: space-around;
+    }
+
+    .product-catalog {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+
+    .cart-modal {
+        width: 100%;
+        right: -100%;
+    }
+
+    .checkout-modal-content {
+        width: 95%;
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+
+    .hero-section p {
+        font-size: 1rem;
+    }
+
+    .product-card {
+        padding: 1rem;
+    }
+
+    .product-card h3 {
+        font-size: 1.2rem;
+    }
+
+    .product-card .price {
+        font-size: 1.4rem;
+    }
+}
